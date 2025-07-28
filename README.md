@@ -2,6 +2,9 @@
 
 A fast, reliable URL shortener with analytics built on React + Express + MongoDB + Redis.
 
+![System Design Diagram](https://ibb.co/G3bKL795)
+*System architecture diagram by NeetCode*
+
 ## What it does
 
 - Shortens URLs (obviously)
