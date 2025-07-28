@@ -2,6 +2,8 @@
 
 A fast, reliable URL shortener with analytics built on React + Express + MongoDB + Redis.
 
+**🔗 [Live Demo](https://urlshu.netlify.app)**
+
 ![System Design Diagram](./assets/neetCode_bitly.png)
 *System architecture diagram by NeetCode*
 
