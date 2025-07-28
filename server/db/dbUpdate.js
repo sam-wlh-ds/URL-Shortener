@@ -9,11 +9,10 @@ async function updateDBFromCache() {
 
     try {
         do {
-            // Correct way to call SCAN with the 'redis' npm package (v4+)
             const reply = await redisClient.scan(cursor, { MATCH: '*', COUNT: 100 });
 
-            cursor = reply.cursor; // Access the cursor from the reply object
-            const shortUrlKeys = reply.keys; // Access the keys from the reply object
+            cursor = reply.cursor; 
+            const shortUrlKeys = reply.keys;
 
 
             for (const key of shortUrlKeys) {

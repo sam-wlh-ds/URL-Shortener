@@ -1,17 +1,28 @@
 import express from 'express';
 import cron from 'node-cron';
+import cors from 'cors';
+import dotenv from "dotenv";
+dotenv.config();
 import { connectToDB, checkDBConnection } from './db/dbConnect.js';
 import { updateDBFromCache, updateCacheFromDB } from './db/dbUpdate.js';
+import { refreshBlacklistFromSource } from './utils/urlSafety.js';
 
 import shorten from './routes/shorten.js';
 import redirect from './routes/redirect.js';
+import analytics from './routes/analytics.js';
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
+app.use(cors({
+  origin: process.env.BASEURL,
+  credentials: true
+}));
+
 app.use("/shorten", checkDBConnection, shorten);
+app.use("/analytics", checkDBConnection, analytics);
 app.use("/", checkDBConnection, redirect);
 
 app.use((err,req,res,next) => {
@@ -40,6 +51,10 @@ connectToDB().then(
                 await updateCacheFromDB();
                 console.log('updateCacheFromDB completed.');
 
+                console.log('Running refreshBlacklistFromSource...');
+                await refreshBlacklistFromSource();
+                console.log('refreshBlacklistFromSource completed.');
+                
                 console.log('Cache refresh sequence completed successfully.');
             } catch (error) {
                 console.error('Cache refresh sequence failed:', error);
@@ -49,6 +64,6 @@ connectToDB().then(
             timezone: process.env.TIMEZONE
         });
 
-        console.log('Cron job scheduled. TODO: Adjust interval for production');
+        console.log('Cron job scheduled.');
   })
 ).catch(error => console.log(error));

@@ -1,5 +1,6 @@
 import UrlModel from "../models/UrlModel.js";
 import crypto from "crypto";
+import { isSafeUrl } from "../utils/urlSafety.js";
 
 async function createShortUrl(url) {
     if (!url || typeof url !== "string" || !url.trim()) {
@@ -8,13 +9,30 @@ async function createShortUrl(url) {
 
     let processedUrl = url.trim();
 
+    const hasProtocol = /^[a-z][a-z0-9+.-]*:\/\//i.test(processedUrl);
+    
     // Add https:// if no protocol is present
-    if (
-        !/^https?:\/\//i.test(processedUrl) ||
-        !/^http?:\/\//i.test(processedUrl)
-    ) {
+    if (!hasProtocol) {
         processedUrl = `https://${processedUrl}`;
     }
+    // console.log(processedUrl);
+    try{
+        const safetyCheck = await isSafeUrl(processedUrl);
+        if (!safetyCheck.safe){
+            return {
+                success: false,
+                message: safetyCheck.reason
+            }
+        }
+        const existingUrl = await UrlModel.findOne({ longUrl:processedUrl });
+        if (existingUrl) {
+            return {
+                success: true,
+                message: "URL already shortened!",
+                shortUrl : existingUrl.shortUrl,
+            };
+        }
+    } catch (error) {console.log(error);}
 
     const MAX_RETRIES = 5;
     let attempts = 0;

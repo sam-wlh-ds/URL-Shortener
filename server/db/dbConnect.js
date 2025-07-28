@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { createClient } from "redis";
 dotenv.config();
+import { initializeBlacklist } from "../utils/urlSafety.js";
 
 let redisClient;
 
@@ -27,7 +28,7 @@ async function connectToDB() {
         await redisClient.set('connection_test_key', 'Redis connection successful!');
         const testValue = await redisClient.get('connection_test_key');
         console.log(`Redis Test Key Value: ${testValue}`);
-
+        initializeBlacklist();
     } catch (error) {
         console.error("Connection to DBs Failed!", error);
         process.exit(1);

@@ -14,6 +14,7 @@ const shortenController = [
         if (!errors.isEmpty()){
           return res.status(400).json({ errors: errors.array() });
         }
+
         const { url } = req.body;
         try{
             const shortUrl = await createShortUrl(url);
