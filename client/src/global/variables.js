@@ -1,3 +1,3 @@
-const backend = "http://localhost:8000";
+const backend = "https://surl-gmkm.onrender.com";
 
 export {backend};
