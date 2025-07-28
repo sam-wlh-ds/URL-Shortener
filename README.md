@@ -2,7 +2,7 @@
 
 A fast, reliable URL shortener with analytics built on React + Express + MongoDB + Redis.
 
-![System Design Diagram](https://i.ibb.co/YTqzM2XL/neet-Code-bitly.png)
+![System Design Diagram](./assets/neetCode_bitly.png)
 *System architecture diagram by NeetCode*
 
 ## What it does
