@@ -1,5 +1,7 @@
 import express from 'express';
+import cron from 'node-cron';
 import { connectToDB, checkDBConnection } from './db/dbConnect.js';
+import { updateDBFromCache, updateCacheFromDB } from './db/dbUpdate.js';
 
 import shorten from './routes/shorten.js';
 import redirect from './routes/redirect.js';
@@ -15,12 +17,38 @@ app.use("/", checkDBConnection, redirect);
 app.use((err,req,res,next) => {
     console.log(err);
     res.status((err.statusCode || 500)).json({message:err.message});
-    res.end();
 })
 
 const PORT = process.env.PORT || 3000;
 connectToDB().then(
   app.listen(PORT, ()=>{
       console.log(`Listening on PORT ${PORT}`);
+        console.log('Database connected. Scheduling cron jobs...');
+
+        // --- Cron Job Scheduling ---
+
+        // Schedule Update (every 6 hours)
+        cron.schedule('0 */6 * * *', async () => {
+        // cron.schedule('*/1 * * * *', async () => { // Testing (every 1 min)
+            console.log('Starting scheduled cache refresh sequence...');
+            try {
+                console.log('Running updateDBFromCache...');
+                await updateDBFromCache();
+                console.log('updateDBFromCache completed.');
+
+                console.log('Running updateCacheFromDB...');
+                await updateCacheFromDB();
+                console.log('updateCacheFromDB completed.');
+
+                console.log('Cache refresh sequence completed successfully.');
+            } catch (error) {
+                console.error('Cache refresh sequence failed:', error);
+            }
+        }, {
+            scheduled: true,
+            timezone: process.env.TIMEZONE
+        });
+
+        console.log('Cron job scheduled. TODO: Adjust interval for production');
   })
 ).catch(error => console.log(error));

@@ -3,7 +3,7 @@ import { getLongUrl } from "../db/dbQuery.js";
 const redirectController = [
     async (req, res, next) => {
         const { url } = req.params;
-        console.log(url);
+        // console.log(url);
         try{
             const {longUrl} = await getLongUrl(url);
             // console.log(longUrl);
