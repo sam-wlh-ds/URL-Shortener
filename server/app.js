@@ -39,8 +39,8 @@ connectToDB().then(
         // --- Cron Job Scheduling ---
 
         // Schedule Update (every 6 hours)
-        cron.schedule('0 */6 * * *', async () => {
-        // cron.schedule('*/1 * * * *', async () => { // Testing (every 1 min)
+        // cron.schedule('0 */6 * * *', async () => {
+        cron.schedule('*/10 * * * *', async () => { // Testing (every 10 min)
             console.log('Starting scheduled cache refresh sequence...');
             try {
                 console.log('Running updateDBFromCache...');
